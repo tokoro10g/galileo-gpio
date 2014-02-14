@@ -1,14 +1,14 @@
 "use strict";
 var fs = require("fs"),
-	path = require("path"),
-	exec = require("child_process").exec;
+	path = require("path");
 
 var sysFsPath = "/sys/class/gpio";
 
 var pinMapping = {
 	"3": 18,
 	"4": 28,
-	"5": 17
+	"5": 17,
+	"13": 39
 };
 
 function noop(){}
@@ -50,14 +50,8 @@ var gpio = {
 		}
 
 		direction = sanitizeDirection(direction);
-/*
-		exec(gpioAdmin + " export " + pinMapping[pinNumber], handleExecResponse("open", pinNumber, function(err) {
-			if(err) return (callback || noop)(err);
-
-			gpio.setDirection(pinNumber, direction, callback);
-		}));
-*/
-
+		fs.writeFile(sysFsPath + "/export" , pinMapping[pinNumber] , callback);
+		gpio.setDirection(pinNumber, direction, callback);
 	},
 
 	setDirection: function(pinNumber, direction, callback) {
@@ -79,7 +73,7 @@ var gpio = {
 	close: function(pinNumber, callback) {
 		pinNumber = sanitizePinNumber(pinNumber);
 
-		exec(gpioAdmin + " unexport " + pinMapping[pinNumber], handleExecResponse("close", pinNumber, callback || noop));
+		fs.writeFile(sysFsPath + "/unexport" , pinMapping[pinNumber] , callback);
 	},
 
 	read: function(pinNumber, callback) {

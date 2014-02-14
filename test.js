@@ -1,9 +1,7 @@
 var gpio = require("./galileo-gpio");
 
-gpio.open(18, "output", function(err) {
-	gpio.open(30, "input", function(err) {
-	    gpio.read(18, function(err, value) {
-	        console.log(value);
-	    });
+gpio.open(13, "output", function(err) {
+	gpio.write(13, 1, function(err) {
+		console.log(err);
 	});
 });
